@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base style for the entire application */
+body {
+  font-family: 'Inter', sans-serif;
+  color: #1f2937; /* Dark Gray 800 */
+}
+
+/* Custom scrollbar styling (optional, for aesthetics) */
+/* The filter sidebar might benefit from this */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Global button focus style reset for Tailwind default buttons */
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.4); /* primary-blue shadow */
+}
+
+/* Ensure the root element takes up the full height */
+#root {
+  min-height: 100vh;
+}
