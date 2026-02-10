@@ -21,7 +21,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
-  const formattedRating = average_rating.toFixed(1);
+  // Ensure we always work with numeric values even if the API sends strings
+  const numericPrice =
+    typeof price === 'number' ? price : parseFloat(price as unknown as string);
+  const formattedPrice = Number.isFinite(numericPrice)
+    ? numericPrice.toFixed(2)
+    : String(price);
+
+  const numericRating =
+    typeof average_rating === 'number'
+      ? average_rating
+      : parseFloat(average_rating as unknown as string);
+  const formattedRating = Number.isFinite(numericRating)
+    ? numericRating.toFixed(1)
+    : 'N/A';
 
   return (
     <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-transform duration-300 ease-in-out transform hover:-translate-y-1 flex flex-col overflow-hidden border border-gray-100">
@@ -65,7 +78,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Price and Action */}
         <div className="mt-auto pt-2 flex items-center justify-between">
           <span className="text-xl font-extrabold text-primary-blue">
-            ${price.toFixed(2)}
+            ${formattedPrice}
           </span>
           <button
             className={`px-4 py-2 text-sm font-medium rounded-lg transition duration-200 ${
