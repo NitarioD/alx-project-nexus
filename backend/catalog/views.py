@@ -2,6 +2,8 @@ from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Prefetch
 
@@ -9,14 +11,16 @@ from .models import Category, Product, Review
 from .serializers import CategorySerializer, ProductSerializer, ReviewSerializer
 from .filters import ProductFilter
 
-class CategoryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class CategoryViewSet(viewsets.ModelViewSet):
     """
-    A simple ViewSet for viewing categories. Read-only for public API.
+    CRUD ViewSet for product categories.
+    Public can read; write operations require authentication.
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # Caching or other optimizations can be added here
-    # ordering_fields = ['title']
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['title', 'created_at']
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -28,9 +32,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         Prefetch('reviews', queryset=Review.objects.all().order_by('-created_at'))
     )
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
-    search_fields = ['name', 'description', 'category__title'] # Use DRF's search feature too
+    # Search and ordering leverage DRF's built-in filters
+    search_fields = ['name', 'description', 'category__title']
     ordering_fields = ['name', 'price', 'stock_quantity', 'created_at']
 
     # --- Custom Action for Reviews (Nested Route) ---

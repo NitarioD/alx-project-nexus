@@ -13,16 +13,19 @@ export const baseApi = createApi({
   reducerPath: 'api',
   
   // Define the base query function
-  baseQuery: fetchBaseQuery({ 
+  baseQuery: fetchBaseQuery({
     baseUrl: API_BASE_URL,
-    prepareHeaders: (headers) => {
-        // Example: Add an Authorization header if needed (e.g., for user login)
-        // const token = localStorage.getItem('authToken');
-        // if (token) {
-        //   headers.set('Authorization', `Bearer ${token}`);
-        // }
-        headers.set('Content-Type', 'application/json');
-        return headers;
+    prepareHeaders: (headers, { getState }) => {
+      // Read JWT access token from auth slice if available
+      const state = getState() as any;
+      const token: string | null = state?.auth?.accessToken ?? null;
+
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+
+      headers.set('Content-Type', 'application/json');
+      return headers;
     },
   }),
   

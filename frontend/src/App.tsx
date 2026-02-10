@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
+import AdminDashboard from './pages/AdminDashboard';
 import { RootState } from './app/store';
 import { useSelector } from 'react-redux';
 import FilterSidebar from './components/FilterSidebar';
 
 
+export type AppPage = 'home' | 'productDetail' | 'admin';
+
 function App() {
   // Simple state for "routing" as we only have the Home page and don't use React Router.
-  const [currentPage, setCurrentPage] = useState<'home' | 'productDetail'>('home');
+  const [currentPage, setCurrentPage] = useState<AppPage>('home');
   // Simple check for the sidebar state from Redux
   const isSidebarOpen = useSelector((state: RootState) => state.products.isSidebarOpen);
 
@@ -39,6 +42,8 @@ function App() {
             </button>
           </div>
         );
+      case 'admin':
+        return <AdminDashboard />;
       default:
         return <Home />;
     }
@@ -47,7 +52,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* 1. Navigation Bar */}
-      <Navbar />
+      <Navbar currentPage={currentPage} onNavigate={setCurrentPage} />
 
       <main className="flex flex-1 relative pt-16">
         

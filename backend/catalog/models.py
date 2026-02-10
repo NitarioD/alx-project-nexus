@@ -13,6 +13,10 @@ class Category(models.Model):
     class Meta:
         ordering = ['title']
         verbose_name_plural = "Categories"
+        indexes = [
+            models.Index(fields=['slug']),
+            models.Index(fields=['title']),
+        ]
 
     def __str__(self):
         return self.title
@@ -58,6 +62,12 @@ class Product(models.Model):
 
     class Meta:
         ordering = ['name']
+        indexes = [
+            models.Index(fields=['is_available']),
+            models.Index(fields=['price']),
+            models.Index(fields=['created_at']),
+            models.Index(fields=['category', 'price']),
+        ]
 
     def __str__(self):
         return self.name

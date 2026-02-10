@@ -80,7 +80,10 @@ export const productsApi = baseApi.injectEndpoints({
      * Endpoint to submit a new review for a product.
      * Corresponds to: POST /api/products/{id}/reviews/
      */
-    submitReview: builder.mutation<Review, { productId: number; data: Omit<Review, 'id' | 'product' | 'created_at'> }>({
+    submitReview: builder.mutation<
+      Review,
+      { productId: number; data: Omit<Review, 'id' | 'product' | 'created_at'> }
+    >({
       query: ({ productId, data }) => ({
         url: `products/${productId}/reviews/`,
         method: 'POST',
@@ -92,13 +95,47 @@ export const productsApi = baseApi.injectEndpoints({
         { type: 'Product', id: 'LIST' },
       ],
     }),
+
+    /**
+     * Create a new product (admin-only in the backend via JWT auth).
+     * Corresponds to: POST /api/products/
+     */
+    createProduct: builder.mutation<Product, Partial<Product>>({
+      query: (body) => ({
+        url: 'products/',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: [{ type: 'Product', id: 'LIST' }],
+    }),
+
+    /**
+     * Update an existing product by ID.
+     * Corresponds to: PATCH /api/products/{id}/
+     */
+    updateProduct: builder.mutation<
+      Product,
+      { id: number; data: Partial<Product> }
+    >({
+      query: ({ id, data }) => ({
+        url: `products/${id}/`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Product', id },
+        { type: 'Product', id: 'LIST' },
+      ],
+    }),
   }),
 });
 
 // Export hooks for usage in functional components
-export const { 
-  useGetProductsQuery, 
-  useGetProductByIdQuery, 
-  useGetCategoriesQuery, 
+export const {
+  useGetProductsQuery,
+  useGetProductByIdQuery,
+  useGetCategoriesQuery,
   useSubmitReviewMutation,
+  useCreateProductMutation,
+  useUpdateProductMutation,
 } = productsApi;

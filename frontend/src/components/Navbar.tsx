@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Menu, X, Search, ShoppingCart } from 'lucide-react';
 import { toggleSidebar } from '../features/products/productsSlice';
 import { AppDispatch, RootState } from '../app/store';
+import { AppPage } from '../App';
 
 // We'll use this mock function for demonstration purposes
 const mockSearchFunction = (term: string) => {
@@ -11,7 +12,12 @@ const mockSearchFunction = (term: string) => {
     // e.g., dispatch(productsApi.endpoints.getProducts.initiate({ search: term, ...otherParams }));
 };
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  currentPage: AppPage;
+  onNavigate: (page: AppPage) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isSidebarOpen = useSelector((state: RootState) => state.products.isSidebarOpen);
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,17 +67,22 @@ const Navbar: React.FC = () => {
           </div>
         </form>
 
-        {/* Action Buttons (Cart, etc.) */}
+        {/* Action Buttons (Cart, Admin, etc.) */}
         <div className="flex items-center space-x-4">
           <button className="p-2 rounded-full text-gray-700 hover:bg-gray-100 relative">
             <ShoppingCart className="h-6 w-6" />
             {/* Mock Cart Count */}
-            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">3</span>
+            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+              3
+            </span>
           </button>
-          
-          <div className="hidden sm:block text-sm font-medium text-gray-700">
-            Hi, User!
-          </div>
+
+          <button
+            onClick={() => onNavigate(currentPage === 'admin' ? 'home' : 'admin')}
+            className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium border border-primary-blue text-primary-blue hover:bg-primary-blue hover:text-white transition"
+          >
+            {currentPage === 'admin' ? 'Back to Catalog' : 'Admin'}
+          </button>
         </div>
       </div>
     </header>

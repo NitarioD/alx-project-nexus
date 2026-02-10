@@ -32,17 +32,18 @@ export interface Product {
   id: number;
   name: string;
   description: string;
-  price: number;
+  // DRF may serialize Decimal as string; accept both to keep types honest
+  price: number | string;
   stock_quantity: number;
-  image_url: string;
+  image_url: string | null;
   is_available: boolean;
   created_at: string;
   updated_at: string;
-  
+
   // Relationships/Computed Fields from Serializer
   category: number; // Category ID
   category_title: string;
-  average_rating: number;
+  average_rating: number | string;
   reviews: Review[]; // Nested reviews only in detail view
 }
 
