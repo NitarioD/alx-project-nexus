@@ -1,79 +1,183 @@
-🐍 Backend API Service (Django REST Framework)
+# ALX Project Nexus - E-Commerce Platform
 
-This folder contains the complete source code for the RESTful API that powers the ALX Project Nexus application.
+A modern full-stack e-commerce platform built with React (Vite) frontend and Django REST API backend, featuring product catalog, user authentication, and shopping cart functionality.
 
-⚙️ Technology Stack
+## ��� Features
 
-Framework: Django 5.0
+- **Product Catalog**: Browse products with categories, search, and filtering
+- **User Authentication**: JWT-based login and registration
+- **Shopping Cart**: Add/remove products, quantity management
+- **Responsive Design**: Mobile-first UI with Tailwind CSS
+- **API Documentation**: Interactive Swagger documentation
+- **Admin Dashboard**: Product and category management
 
-API: Django REST Framework (DRF)
+## ��� Tech Stack
 
-Language: Python 3.10+
+### Frontend
+- **React 18** with TypeScript
+- **Vite** for fast development and building
+- **Redux Toolkit** for state management
+- **Tailwind CSS** for styling
+- **React Router** for navigation
 
-Database: PostgreSQL (with psycopg2-binary)
+### Backend
+- **Django 5.0** with Django REST Framework
+- **PostgreSQL** database
+- **JWT Authentication** with Simple JWT
+- **Django Filters** for API filtering
+- **CORS** support for frontend integration
 
-Data Filtering: django-filter
+### DevOps
+- **Docker** for containerization
+- **Gunicorn** for production serving
+- **Environment-based configuration**
 
-Cross-Origin: django-cors-headers
+## ��� Project Structure
 
-📊 Database Schema (Core Models)
+```
+alx-project-nexus/
+├── frontend/          # React application
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   ├── features/      # Redux slices and API logic
+│   │   ├── pages/         # Page components
+│   │   └── types/         # TypeScript type definitions
+│   ├── package.json
+│   └── vite.config.ts
+├── backend/           # Django application
+│   ├── catalog/           # Main app with models and views
+│   ├── backend/           # Django project settings
+│   ├── manage.py
+│   ├── requirements.txt
+│   └── settings.py
+└── README.md
+```
 
-The primary application, catalog/, manages the core e-commerce data structure:
+## ���‍♂️ Quick Start
 
-Product: Stores details (name, description, price, stock, image URL).
+### Prerequisites
+- Python 3.8+
+- Node.js 16+
+- PostgreSQL (optional, can use SQLite for development)
 
-Category: Simple grouping for products.
+### Backend Setup
 
-Review: User-submitted ratings and comments for products.
+1. Navigate to backend directory:
+   ```bash
+   cd backend
+   ```
 
-🚀 Setup and Installation (Docker Compose)
+2. Create virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-The easiest way to run the entire backend service (including the PostgreSQL database) is using Docker Compose.
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Configuration: Create and configure the .env file in this directory (see the placeholder file).
+4. Create environment file:
+   ```bash
+   # Create .env file with:
+   DEBUG=True
+   SECRET_KEY=your-secret-key-here
+   ALLOWED_HOSTS=127.0.0.1,localhost
+   ```
 
-Build & Run:
+5. Run migrations:
+   ```bash
+   python manage.py migrate
+   ```
 
-# From the project root directory
-docker-compose build
-docker-compose up
+6. (Optional) Seed database:
+   ```bash
+   python manage.py seed_data
+   ```
 
+7. Start development server:
+   ```bash
+   python manage.py runserver
+   ```
 
-Database Seeding: Run the custom management command to populate the database with dummy data:
+### Frontend Setup
 
-docker-compose exec backend python manage.py seed_data --items 100
+1. Navigate to frontend directory:
+   ```bash
+   cd frontend
+   ```
 
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-Access: The API will be available at http://localhost:8000/.
+3. Create environment file (optional):
+   ```bash
+   # Create .env file with:
+   VITE_API_BASE_URL=http://localhost:8000/api
+   ```
 
-📍 Key Endpoints
+4. Start development server:
+   ```bash
+   npm run dev
+   ```
 
-Endpoint
+## ��� API Documentation
 
-Method
+Once the backend is running, visit:
+- **Swagger UI**: http://localhost:8000/api/docs/
+- **ReDoc**: http://localhost:8000/api/docs/redoc/
 
-Description
+### Main Endpoints
 
-/api/products/
+- `GET /api/products/` - List products with filtering
+- `GET /api/products/{id}/` - Product details
+- `GET /api/categories/` - List categories
+- `POST /api/auth/login/` - User login
+- `POST /api/auth/token/refresh/` - Refresh JWT token
 
-GET
+## ��� Development
 
-List all products with filtering, searching, and pagination.
+### Running Tests
+```bash
+# Backend tests
+cd backend && python manage.py test
 
-/api/products/{id}/
+# Frontend build check
+cd frontend && npm run build
+```
 
-GET
+### Code Quality
+- **Backend**: Follow Django best practices, use type hints
+- **Frontend**: ESLint and TypeScript for code quality
+- **Git**: Feature branches, descriptive commits
 
-Retrieve a specific product.
+## ��� Deployment
 
-/api/categories/
+### Backend
+```bash
+# Production settings
+DEBUG=False
+SECRET_KEY=your-production-secret
+ALLOWED_HOSTS=your-domain.com
+```
 
-GET
+### Frontend
+```bash
+npm run build
+# Serve dist/ folder with any static server
+```
 
-List all available product categories.
+## ��� Contributing
 
-/api/products/{id}/reviews/
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-GET/POST
+## ��� License
 
-List and create reviews for a product.
+This project is licensed under the MIT License.
