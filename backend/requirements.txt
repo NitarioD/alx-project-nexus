@@ -1,6 +1,7 @@
 Django==5.0.*
 djangorestframework==3.15.*
 djangorestframework-simplejwt
+drf-yasg
 psycopg2-binary
 python-decouple
 django-cors-headers
