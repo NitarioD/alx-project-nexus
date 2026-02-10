@@ -59,9 +59,13 @@ export const productsApi = baseApi.injectEndpoints({
      */
     getCategories: builder.query<Category[], void>({
       query: () => 'categories',
-      transformResponse: (response: Category[]) => {
-        // Return only the list of categories, assuming the API returns a direct list
-        return response;
+      transformResponse: (response: PaginatedResponse<Category> | Category[]) => {
+        // Handle both paginated and non-paginated responses
+        if (Array.isArray(response)) {
+          return response;
+        }
+        // DRF paginated response: { count, next, previous, results }
+        return response.results;
       },
       providesTags: (result) =>
         result
