@@ -8,17 +8,40 @@ import { Category } from '../types';
 
 interface FilterSidebarProps {
   isSidebarOpen: boolean;
-  // This prop will be used to lift the filter state up to Home.tsx
   onApplyFilters: (filters: { category_slug?: string; min_price?: number; max_price?: number }) => void;
+}
+
+/** Groups categories alphabetically by first letter. Returns array of { letter, categories }. */
+function groupCategoriesByLetter(categories: Category[]): { letter: string; categories: Category[] }[] {
+  const grouped = new Map<string, Category[]>();
+  for (const cat of categories) {
+    const letter = (cat.title[0] || '').toUpperCase();
+    const existing = grouped.get(letter) || [];
+    existing.push(cat);
+    grouped.set(letter, existing);
+  }
+  return Array.from(grouped.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([letter, cats]) => ({ letter, categories: cats }));
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ isSidebarOpen, onApplyFilters }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const appliedFilters = useSelector((state: RootState) => state.products.appliedFilters);
   const { data: categories = [], isLoading: isLoadingCategories } = useGetCategoriesQuery();
 
-  // Local state for filters
+  // Local state for filters (synced with Redux)
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+
+  // Sync local state with Redux when applied filters change
+  useEffect(() => {
+    setSelectedCategory(appliedFilters.category_slug);
+    setPriceRange({
+      min: appliedFilters.min_price != null ? String(appliedFilters.min_price) : '',
+      max: appliedFilters.max_price != null ? String(appliedFilters.max_price) : '',
+    });
+  }, [appliedFilters.category_slug, appliedFilters.min_price, appliedFilters.max_price]);
 
   const handleApply = () => {
     onApplyFilters({
@@ -111,7 +134,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isSidebarOpen, onApplyFil
                   All Products
                 </button>
               </li>
-              {categories.map(categoryItem)}
+              {groupCategoriesByLetter(categories).map(({ letter, categories: groupCats }) => (
+                <li key={letter} className="mt-4 first:mt-0">
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2 px-2">
+                    {letter}
+                  </span>
+                  <ul className="space-y-1">
+                    {groupCats.map(categoryItem)}
+                  </ul>
+                </li>
+              ))}
             </ul>
           )}
         </section>

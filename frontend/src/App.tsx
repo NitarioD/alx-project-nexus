@@ -2,25 +2,22 @@ import { useState } from 'react';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import AdminDashboard from './pages/AdminDashboard';
-import { RootState } from './app/store';
-import { useSelector } from 'react-redux';
+import { RootState, AppDispatch } from './app/store';
+import { useSelector, useDispatch } from 'react-redux';
 import FilterSidebar from './components/FilterSidebar';
-
+import { setAppliedFilters } from './features/products/productsSlice';
 
 export type AppPage = 'home' | 'productDetail' | 'admin';
 
 function App() {
+  const dispatch = useDispatch<AppDispatch>();
   // Simple state for "routing" as we only have the Home page and don't use React Router.
   const [currentPage, setCurrentPage] = useState<AppPage>('home');
   // Simple check for the sidebar state from Redux
   const isSidebarOpen = useSelector((state: RootState) => state.products.isSidebarOpen);
 
-  // FIX FOR TS2741: Define the required prop function here.
-  // The 'filters' parameter type should match what FilterSidebar returns (likely an object)
-  const handleApplyFilters = (filters: any) => {
-    // In a real application, this function would dispatch an action 
-    // to Redux or trigger a data fetch based on the applied filters.
-    console.log("Filters applied:", filters);
+  const handleApplyFilters = (filters: { category_slug?: string; min_price?: number; max_price?: number }) => {
+    dispatch(setAppliedFilters(filters));
   };
 
 

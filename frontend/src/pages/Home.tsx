@@ -10,32 +10,30 @@ import ProductSkeleton from '../components/ProductSkeleton';
 import SortDropdown from '../components/SortDropdown';
 import Pagination from '../components/Pagination';
 import { SlidersHorizontal } from 'lucide-react';
-import { toggleSidebar } from '../features/products/productsSlice';
-
+import { toggleSidebar, setAppliedFilters } from '../features/products/productsSlice';
 
 // Define the initial state for fetching parameters
 const PAGE_SIZE = 20; // Matches DRF default PAGE_SIZE
-interface AppliedFilters {
-  category_slug?: string;
-  min_price?: number;
-  max_price?: number;
-}
 
 const Home: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const currentSort = useSelector((state: RootState) => state.products.currentSort);
+  const appliedFilters = useSelector((state: RootState) => state.products.appliedFilters);
 
-  // State for pagination and filtering
+  // State for pagination
   const [offset, setOffset] = useState(0);
-  const [appliedFilters, setAppliedFilters] = useState<AppliedFilters>({});
   
-  // Combine all query parameters
+  // Reset to first page when filters change
+  useEffect(() => {
+    setOffset(0);
+  }, [appliedFilters.category_slug, appliedFilters.min_price, appliedFilters.max_price]);
+  
+  // Combine all query parameters (filters from Redux)
   const queryParams = {
     limit: PAGE_SIZE,
     offset,
     ordering: currentSort,
     ...appliedFilters,
-    // Add is_available: true if we only want available products
     is_available: true,
   };
 
@@ -45,11 +43,10 @@ const Home: React.FC = () => {
   const products = data?.results || [];
   const totalCount = data?.count || 0;
   
-  // Function called by FilterSidebar when filters are applied
-  const handleApplyFilters = (filters: AppliedFilters) => {
-    // Reset offset to 0 when new filters are applied
+  // Function called when user clicks "Clear All Filters" in empty state
+  const handleClearFilters = () => {
     setOffset(0);
-    setAppliedFilters(filters);
+    dispatch(setAppliedFilters({}));
   };
   
   // Function called by SortDropdown
@@ -136,7 +133,7 @@ const Home: React.FC = () => {
           <h2 className="text-xl font-semibold mb-2">No Products Found</h2>
           <p>Try clearing your filters or adjusting your search criteria.</p>
           <button 
-            onClick={() => handleApplyFilters({})}
+            onClick={handleClearFilters}
             className="mt-4 px-4 py-2 bg-gray-100 text-primary-blue rounded-lg hover:bg-gray-200 transition font-medium"
           >
             Clear All Filters
