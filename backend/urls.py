@@ -12,6 +12,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('catalog.urls')),
+    path('api/auth/', include('auth.urls')),
     path('api/auth/login/', TokenObtainPairView.as_view()),
     path('api/auth/token/refresh/', TokenRefreshView.as_view()),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger'),

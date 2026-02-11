@@ -11,6 +11,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_filters',
     'catalog',
+    'auth',
     'corsheaders',
 ]
 

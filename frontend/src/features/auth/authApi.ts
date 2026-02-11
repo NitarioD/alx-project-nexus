@@ -10,6 +10,12 @@ export interface LoginResponse {
   refresh: string;
 }
 
+export interface AdminSignupResponse {
+  username: string;
+  password: string;
+  message: string;
+}
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
@@ -19,9 +25,15 @@ export const authApi = baseApi.injectEndpoints({
         body: credentials,
       }),
     }),
+    adminSignup: builder.mutation<AdminSignupResponse, void>({
+      query: () => ({
+        url: 'auth/admin/signup/',
+        method: 'POST',
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useLoginMutation } = authApi;
+export const { useLoginMutation, useAdminSignupMutation } = authApi;
 

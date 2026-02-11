@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../app/store';
-import { useLoginMutation } from '../features/auth/authApi';
+import { useLoginMutation, useAdminSignupMutation } from '../features/auth/authApi';
 import { setCredentials, logout } from '../features/auth/authSlice';
 import {
   useCreateProductMutation,
@@ -16,6 +16,8 @@ const AdminDashboard: React.FC = () => {
 
   // Auth mutations
   const [login, { isLoading: isLoggingIn, error: loginError }] = useLoginMutation();
+  const [adminSignup, { data: signupData, isLoading: isSigningUp, error: signupError }] =
+    useAdminSignupMutation();
 
   // Product mutations
   const [createProduct, { isLoading: isCreating }] = useCreateProductMutation();
@@ -39,6 +41,15 @@ const AdminDashboard: React.FC = () => {
     stock_quantity: '',
     is_available: true,
   });
+
+  const handleAdminSignup = async () => {
+    try {
+      const result = await adminSignup().unwrap();
+      setLoginForm({ username: result.username, password: result.password });
+    } catch {
+      // handled via signupError
+    }
+  };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,6 +121,20 @@ const AdminDashboard: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
           Admin Login
         </h2>
+
+        {signupData && (
+          <div className="mb-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <p className="text-sm font-medium text-emerald-800 mb-2">Superuser created! Save these credentials:</p>
+            <p className="font-mono text-sm break-all">
+              <strong>Username:</strong> {signupData.username}
+            </p>
+            <p className="font-mono text-sm break-all mt-1">
+              <strong>Password:</strong> {signupData.password}
+            </p>
+            <p className="text-xs text-emerald-700 mt-2">Credentials are pre-filled below. Click Login to sign in.</p>
+          </div>
+        )}
+
         <form onSubmit={handleLoginSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -145,6 +170,11 @@ const AdminDashboard: React.FC = () => {
               Invalid credentials or server error. Please try again.
             </p>
           )}
+          {signupError && (
+            <p className="text-sm text-red-600">
+              Signup failed. Please try again.
+            </p>
+          )}
 
           <button
             type="submit"
@@ -154,6 +184,18 @@ const AdminDashboard: React.FC = () => {
             {isLoggingIn ? 'Logging in...' : 'Login'}
           </button>
         </form>
+
+        <div className="mt-4 pt-4 border-t border-gray-200">
+          <p className="text-sm text-gray-600 mb-2">No admin account yet?</p>
+          <button
+            type="button"
+            onClick={handleAdminSignup}
+            disabled={isSigningUp}
+            className="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition disabled:opacity-60"
+          >
+            {isSigningUp ? 'Creating...' : 'Create Random Superuser'}
+          </button>
+        </div>
       </div>
     );
   }
