@@ -5,22 +5,24 @@ from django.utils.text import slugify
 
 from catalog.models import Category, Product, Review
 
-# --- External Library Mocking (using standard python library instead of Faker) ---
-# In a real project, we would use the 'Faker' library, but to keep the requirements simple,
-# we'll use simple lists for realistic-looking data.
+# --- Product names mapped to their category (for realistic seed data) ---
+# Each product is assigned to the category that best matches its type.
 
-PRODUCT_NAMES = [
-    "Wireless Mechanical Keyboard", "1TB NVMe SSD", "Noise Cancelling Headphones",
-    "4K Curved Monitor", "Ergonomic Office Chair", "Smart Home Hub",
-    "High-Speed Blender", "Stainless Steel Water Bottle", "Portable Power Bank",
-    "Digital Drawing Tablet", "Professional DSLR Camera", "Hiking Backpack 50L",
-    "Organic Cotton T-Shirt", "Minimalist Leather Wallet", "Bluetooth Speaker"
-]
-CATEGORIES = {
-    "Electronics": ["Tech", "Gadgets", "Audio", "Smart"],
-    "Home & Kitchen": ["Appliances", "Cookware", "Decor"],
-    "Fashion": ["Apparel", "Accessories", "Footwear"],
-    "Outdoors": ["Camping", "Hiking", "Travel"],
+PRODUCTS_BY_CATEGORY = {
+    "Electronics": [
+        "Wireless Mechanical Keyboard", "1TB NVMe SSD", "Noise Cancelling Headphones",
+        "4K Curved Monitor", "Smart Home Hub", "Portable Power Bank",
+        "Digital Drawing Tablet", "Professional DSLR Camera", "Bluetooth Speaker",
+    ],
+    "Home & Kitchen": [
+        "Ergonomic Office Chair", "High-Speed Blender", "Stainless Steel Water Bottle",
+    ],
+    "Fashion": [
+        "Organic Cotton T-Shirt", "Minimalist Leather Wallet",
+    ],
+    "Outdoors": [
+        "Hiking Backpack 50L",
+    ],
 }
 
 def generate_description(name):
@@ -55,24 +57,29 @@ class Command(BaseCommand):
         # 2. Create Categories
         self.stdout.write("Creating categories...")
         category_objects = []
-        for title in CATEGORIES.keys():
+        for title in PRODUCTS_BY_CATEGORY.keys():
             category_objects.append(
                 Category(title=title, slug=slugify(title))
             )
         
         Category.objects.bulk_create(category_objects)
-        categories = list(Category.objects.all())
+        categories = {cat.title: cat for cat in Category.objects.all()}
 
         self.stdout.write(self.style.SUCCESS(f"Created {len(categories)} categories."))
 
-        # 3. Create Products
+        # Build flat list of (product_name, category) for sampling
+        product_category_pairs = [
+            (name, categories[cat_title])
+            for cat_title, names in PRODUCTS_BY_CATEGORY.items()
+            for name in names
+        ]
+
+        # 3. Create Products (each product assigned to its matching category)
         self.stdout.write(f"Creating {total_items} products...")
         product_objects = []
         for i in range(total_items):
-            name = random.choice(PRODUCT_NAMES) + f" #{i + 1}"
-            
-            # Select category and generate price/stock
-            category = random.choice(categories)
+            base_name, category = random.choice(product_category_pairs)
+            name = base_name + f" #{i + 1}"
             price = round(random.uniform(9.99, 999.99), 2)
             stock = random.randint(0, 500)
             
