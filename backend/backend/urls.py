@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/', include('catalog.urls')),
 
     # Authentication endpoints
+    path('api/auth/', include('auth.urls')),
     path('api/auth/login/', TokenObtainPairView.as_view()),
     path('api/auth/token/refresh/', TokenRefreshView.as_view()),
 
