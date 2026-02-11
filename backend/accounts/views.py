@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+
 User = get_user_model()
 
 
@@ -40,7 +41,7 @@ def admin_signup(request):
         username = _generate_random_username()
 
     try:
-        user = User.objects.create_superuser(
+        User.objects.create_superuser(
             username=username,
             email=f"{username}@admin.local",
             password=password,

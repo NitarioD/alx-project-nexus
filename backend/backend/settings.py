@@ -31,7 +31,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'catalog.apps.CatalogConfig', # Our main e-commerce app
-    'auth',
+    'accounts',
 ]
 
 MIDDLEWARE = [
