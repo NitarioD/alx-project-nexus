@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/auth/login/', TokenObtainPairView.as_view()),
     path('api/auth/token/refresh/', TokenRefreshView.as_view()),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger'),
+    path('api/docs/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='redoc'),
 ]

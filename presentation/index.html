@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALX Project Nexus — Presentation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+  <style>
+    .reveal h1, .reveal h2 { color: #1e40af; }
+    .reveal .subtitle { color: #4b5563; font-size: 0.6em; }
+    .reveal table { font-size: 0.65em; }
+    .reveal ul { font-size: 0.85em; }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Slide 1: Title -->
+      <section>
+        <h1>ALX Project Nexus</h1>
+        <p class="subtitle">E-Commerce Product Catalog Platform</p>
+        <p style="font-size: 0.5em; margin-top: 3em;">Adunola Mojolaoluwa Olusegun • 10/02/2026</p>
+      </section>
+
+      <!-- Slide 2: Project Overview -->
+      <section>
+        <h2>Project Overview</h2>
+        <ul>
+          <li><strong>What:</strong> Full-stack e-commerce platform for browsing and managing a product catalog</li>
+          <li><strong>Purpose:</strong> React frontend + Django REST API backend</li>
+          <li><strong>Key value:</strong> Filtering, sorting, pagination, admin dashboard, JWT auth</li>
+          <li><strong>Scope:</strong> Product catalog, category filters, admin CRUD, cart UI, reviews</li>
+        </ul>
+      </section>
+
+      <!-- Slide 3: Features -->
+      <section>
+        <h2>Features & Functionality</h2>
+        <p><strong>Customer:</strong> Browse, filter (category, price), sort, paginate, product cards, search bar, responsive</p>
+        <p><strong>Admin:</strong> JWT login, create/update products, logout</p>
+        <p><strong>UX:</strong> Loading skeletons, error states, empty states</p>
+      </section>
+
+      <!-- Slide 4: UI Design Rationale -->
+      <section>
+        <h2>UI Design Rationale</h2>
+        <ul>
+          <li><strong>Design system:</strong> Primary blue (#1e40af), Inter font, 4px base unit</li>
+          <li><strong>Layout:</strong> Fixed navbar, filter sidebar (drawer on mobile), responsive grid</li>
+          <li><strong>Product cards:</strong> Hover lift, stock badges (green/yellow/red)</li>
+          <li><strong>Accessibility:</strong> Focus rings, semantic structure</li>
+        </ul>
+      </section>
+
+      <!-- Slide 5: Technologies -->
+      <section>
+        <h2>Technologies Used</h2>
+        <table>
+          <tr><th>Layer</th><th>Technology</th></tr>
+          <tr><td>Frontend</td><td>React 18, TypeScript, Vite</td></tr>
+          <tr><td>State</td><td>Redux Toolkit (RTK Query)</td></tr>
+          <tr><td>Styling</td><td>Tailwind CSS</td></tr>
+          <tr><td>Backend</td><td>Django 5.0, DRF</td></tr>
+          <tr><td>Auth</td><td>JWT (Simple JWT)</td></tr>
+          <tr><td>API Docs</td><td>Swagger / ReDoc</td></tr>
+        </table>
+      </section>
+
+      <!-- Slide 6: Best Practices -->
+      <section>
+        <h2>Best Practices & Standards</h2>
+        <ul>
+          <li><strong>Frontend:</strong> Component-based, TypeScript, RTK Query caching</li>
+          <li><strong>Backend:</strong> DRF conventions, indexed models, validators</li>
+          <li><strong>General:</strong> Env config, CORS, API documentation</li>
+        </ul>
+      </section>
+
+      <!-- Slide 7: Thank You -->
+      <section>
+        <h1>Thank You</h1>
+        <p>ALX Project Nexus — E-Commerce Product Catalog</p>
+        <p style="font-size: 0.7em; margin-top: 2em;">Questions?</p>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      transition: 'slide',
+      width: 960,
+      height: 700
+    });
+  </script>
+</body>
+</html>
