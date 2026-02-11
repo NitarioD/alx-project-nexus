@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { baseApi } from './api/api';
 import productsReducer from '../features/products/productsSlice';
 import authReducer from '../features/auth/authSlice';
+import cartReducer from '../features/cart/cartSlice';
 
 /**
  * The primary Redux store configuration.
@@ -15,6 +16,7 @@ export const store = configureStore({
     // Add local state reducers
     products: productsReducer,
     auth: authReducer,
+    cart: cartReducer,
   },
   
   // Adding the api middleware enables caching, invalidation, polling, and other features of RTK Query

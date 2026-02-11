@@ -1,12 +1,16 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Star } from "lucide-react";
 import { Product } from "../types";
+import { addToCart } from "../features/cart/cartSlice";
+import { AppDispatch } from "../app/store";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const {
     name,
     price,
@@ -112,7 +116,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 : "bg-primary-blue text-white hover:bg-blue-800 shadow-md"
             }`}
             disabled={isOutOfStock}
-            onClick={() => console.log(`Added product ${product.id} to cart`)}
+            onClick={() => dispatch(addToCart({ product }))}
           >
             {isOutOfStock ? "Sold Out" : "Add to Cart"}
           </button>

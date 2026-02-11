@@ -2,12 +2,13 @@ import { useState } from 'react';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import AdminDashboard from './pages/AdminDashboard';
+import Cart from './pages/Cart';
 import { RootState, AppDispatch } from './app/store';
 import { useSelector, useDispatch } from 'react-redux';
 import FilterSidebar from './components/FilterSidebar';
 import { setAppliedFilters } from './features/products/productsSlice';
 
-export type AppPage = 'home' | 'productDetail' | 'admin';
+export type AppPage = 'home' | 'productDetail' | 'admin' | 'cart';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,6 +42,8 @@ function App() {
         );
       case 'admin':
         return <AdminDashboard />;
+      case 'cart':
+        return <Cart onNavigate={setCurrentPage} />;
       default:
         return <Home />;
     }

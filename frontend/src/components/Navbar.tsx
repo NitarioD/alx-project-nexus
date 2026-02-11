@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Menu, X, Search, ShoppingCart } from 'lucide-react';
 import { toggleSidebar } from '../features/products/productsSlice';
 import { AppDispatch, RootState } from '../app/store';
+import { selectCartItemCount } from '../features/cart/cartSlice';
 import { AppPage } from '../App';
 
 // We'll use this mock function for demonstration purposes
@@ -20,6 +21,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isSidebarOpen = useSelector((state: RootState) => state.products.isSidebarOpen);
+  const cartItemCount = useSelector(selectCartItemCount);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -69,12 +71,17 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
 
         {/* Action Buttons (Cart, Admin, etc.) */}
         <div className="flex items-center space-x-4">
-          <button className="p-2 rounded-full text-gray-700 hover:bg-gray-100 relative">
+          <button
+            onClick={() => onNavigate('cart')}
+            className="p-2 rounded-full text-gray-700 hover:bg-gray-100 relative"
+            aria-label={`Cart with ${cartItemCount} items`}
+          >
             <ShoppingCart className="h-6 w-6" />
-            {/* Mock Cart Count */}
-            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-              3
-            </span>
+            {cartItemCount > 0 && (
+              <span className="absolute top-0 right-0 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                {cartItemCount}
+              </span>
+            )}
           </button>
 
           <button
