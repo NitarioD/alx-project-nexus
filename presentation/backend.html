@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALX Project Nexus — Backend API Presentation</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/theme/white.css">
+  <style>
+    .reveal h1, .reveal h2 { color: #1e40af; }
+    .reveal .subtitle { color: #4b5563; font-size: 0.6em; }
+    .reveal table { font-size: 0.6em; }
+    .reveal ul { font-size: 0.85em; }
+    .reveal pre { font-size: 0.5em; text-align: left; }
+    .reveal .erd-box { border: 1px solid #ccc; padding: 0.5em; margin: 0.3em; font-size: 0.65em; background: #f9fafb; }
+    .reveal .endpoint { font-family: monospace; font-size: 0.7em; background: #f3f4f6; padding: 0.2em 0.5em; }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Slide 1: Title -->
+      <section>
+        <h1>ALX Project Nexus</h1>
+        <p class="subtitle">Backend API — E-Commerce REST Service</p>
+        <p style="font-size: 0.5em; margin-top: 3em;">Django REST Framework • JWT Auth • OpenAPI Documentation</p>
+      </section>
+
+      <!-- Slide 2: API Overview -->
+      <section>
+        <h2>API Project Overview</h2>
+        <ul>
+          <li><strong>What:</strong> RESTful API for an e-commerce product catalog</li>
+          <li><strong>Purpose:</strong> Serve product data, categories, reviews; support admin CRUD via JWT</li>
+          <li><strong>Architecture:</strong> Django 5 + Django REST Framework</li>
+          <li><strong>Base URL:</strong> <code>/api/</code></li>
+          <li><strong>Key value:</strong> Filtering, search, pagination, nested reviews, Swagger/ReDoc docs</li>
+        </ul>
+      </section>
+
+      <!-- Slide 3: ERD & Data Model -->
+      <section>
+        <h2>Entity Relationship Diagram</h2>
+        <pre>
+┌─────────────────────┐       ┌─────────────────────┐       ┌─────────────────────┐
+│      Category       │       │      Product        │       │       Review       │
+├─────────────────────┤       ├─────────────────────┤       ├─────────────────────┤
+│ id (PK)             │◄──────│ category_id (FK)    │◄──────│ product_id (FK)    │
+│ title               │  1:N  │ id (PK)             │  1:N  │ id (PK)            │
+│ slug (unique)       │       │ name                │       │ name               │
+│ created_at          │       │ description         │       │ rating (1-5)       │
+└─────────────────────┘       │ price               │       │ comment            │
+                              │ stock_quantity      │       │ created_at         │
+                              │ image_url           │       └─────────────────────┘
+                              │ is_available        │
+                              │ created_at          │
+                              │ updated_at          │
+                              └─────────────────────┘
+        </pre>
+      </section>
+
+      <!-- Slide 4: Data Model Rationale -->
+      <section>
+        <h2>Data Model Rationale</h2>
+        <ul>
+          <li><strong>Category:</strong> Hierarchy & filtering; slug for SEO; <code>PROTECT</code> on delete to prevent orphaned products</li>
+          <li><strong>Product:</strong> Decimal price & validators; indexes on price, created_at, is_available for fast queries</li>
+          <li><strong>Review:</strong> <code>unique_together</code> (product, name); 1–5 rating; CASCADE so reviews go with product</li>
+          <li><strong>Performance:</strong> Indexes on slug, category+price, is_available; <code>select_related</code>/<code>prefetch_related</code> to avoid N+1</li>
+        </ul>
+      </section>
+
+      <!-- Slide 5: Key Endpoints -->
+      <section>
+        <h2>Key Endpoints</h2>
+        <table>
+          <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+          <tr><td>GET</td><td class="endpoint">/api/products/</td><td>List products (filter, search, sort, paginate)</td></tr>
+          <tr><td>GET</td><td class="endpoint">/api/products/{id}/</td><td>Product detail + reviews</td></tr>
+          <tr><td>POST</td><td class="endpoint">/api/products/</td><td>Create product (JWT required)</td></tr>
+          <tr><td>PATCH</td><td class="endpoint">/api/products/{id}/</td><td>Update product (JWT required)</td></tr>
+          <tr><td>GET/POST</td><td class="endpoint">/api/products/{id}/reviews/</td><td>List or create reviews</td></tr>
+          <tr><td>GET</td><td class="endpoint">/api/categories/</td><td>List categories</td></tr>
+          <tr><td>POST</td><td class="endpoint">/api/auth/admin/signup/</td><td>Create random superuser</td></tr>
+          <tr><td>POST</td><td class="endpoint">/api/auth/login/</td><td>Obtain JWT access & refresh tokens</td></tr>
+          <tr><td>POST</td><td class="endpoint">/api/auth/token/refresh/</td><td>Refresh access token</td></tr>
+        </table>
+      </section>
+
+      <!-- Slide 6: Features -->
+      <section>
+        <h2>API Features</h2>
+        <ul>
+          <li><strong>Filtering:</strong> category_slug, min_price, max_price, is_available</li>
+          <li><strong>Search:</strong> name, description, category__title</li>
+          <li><strong>Ordering:</strong> name, price, stock_quantity, created_at</li>
+          <li><strong>Pagination:</strong> Limit-offset (default 20 per page)</li>
+          <li><strong>Auth:</strong> JWT (Simple JWT); IsAuthenticatedOrReadOnly for catalog</li>
+          <li><strong>Docs:</strong> Swagger at /api/docs/, ReDoc at /api/docs/redoc/, schema at /api/docs.json</li>
+        </ul>
+      </section>
+
+      <!-- Slide 7: Tools & Frameworks -->
+      <section>
+        <h2>Tools, Frameworks & Best Practices</h2>
+        <table>
+          <tr><th>Layer</th><th>Technology</th></tr>
+          <tr><td>Framework</td><td>Django 5.0, Django REST Framework</td></tr>
+          <tr><td>Auth</td><td>djangorestframework-simplejwt</td></tr>
+          <tr><td>Filtering</td><td>django-filter</td></tr>
+          <tr><td>API Docs</td><td>drf-yasg (Swagger / ReDoc)</td></tr>
+          <tr><td>Config</td><td>python-decouple, CORS headers</td></tr>
+          <tr><td>DB</td><td>PostgreSQL (prod), SQLite (dev)</td></tr>
+          <tr><td>Server</td><td>Gunicorn</td></tr>
+        </table>
+        <p style="font-size: 0.75em; margin-top: 1em;"><strong>Practices:</strong> Env-based config, CORS, indexes, validators, prefetch_related, AllowAny for docs</p>
+      </section>
+
+      <!-- Slide 8: Deployment Summary -->
+      <section>
+        <h2>Deployment Summary</h2>
+        <ul>
+          <li><strong>Platform:</strong> Render</li>
+          <li><strong>API URL:</strong> <a href="https://alx-project-nexus-03fo.onrender.com/api/" target="_blank">https://alx-project-nexus-03fo.onrender.com/api/</a></li>
+          <li><strong>Swagger:</strong> <a href="https://alx-project-nexus-03fo.onrender.com/api/docs/" target="_blank">/api/docs/</a></li>
+          <li><strong>Database:</strong> PostgreSQL (Render)</li>
+          <li><strong>Config:</strong> SECRET_KEY, DB_*, CORS_ALLOWED_ORIGINS via env</li>
+        </ul>
+      </section>
+
+      <!-- Slide 9: Thank You -->
+      <section>
+        <h1>Thank You</h1>
+        <p>ALX Project Nexus — Backend API</p>
+        <p style="font-size: 0.7em; margin-top: 2em;">Questions?</p>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.5.0/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      transition: 'slide',
+      width: 960,
+      height: 700
+    });
+  </script>
+</body>
+</html>
