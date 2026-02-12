@@ -14,6 +14,8 @@ Dependencies
 Testing
 
 /coverage
+/test-results
+/playwright-report
 
 Production build output
 
@@ -25,5 +27,6 @@ Misc
 
 Environment variables
 
+.env
 .env.local
 .env.*.local
